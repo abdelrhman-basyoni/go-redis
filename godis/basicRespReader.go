@@ -1,23 +1,10 @@
-package resp_basic
+package godis
 
 import (
 	"errors"
 	"fmt"
-	"io"
 	"strconv"
 )
-
-const (
-	STRING  = '+'
-	ERROR   = '-'
-	INTEGER = ':'
-	BULK    = '$'
-	ARRAY   = '*'
-)
-
-type RespReader interface {
-	readLine() (line []byte, n int, err error)
-}
 
 type BasicReader struct {
 	buffer    []byte
@@ -25,11 +12,9 @@ type BasicReader struct {
 	lines     [][]byte
 }
 
-func NewBasicReader(rd io.Reader) *BasicReader {
-	buf := make([]byte, 1024)
-	length, _ := rd.Read(buf)
+func NewBasicReader(buff string) *BasicReader {
 
-	return &BasicReader{buffer: buf[0:length], readIndex: 0}
+	return &BasicReader{buffer: []byte(buff), readIndex: 0}
 }
 
 func (r *BasicReader) linesExtractor() {
@@ -111,7 +96,7 @@ func (r *BasicReader) Read() (Value, error) {
 
 func (r *BasicReader) readArray() (Value, error) {
 	v := Value{}
-	v.Typ = "array"
+	v.typ = "array"
 
 	// read length of array
 	arrayLen, _, err := r.readInteger()
@@ -120,7 +105,7 @@ func (r *BasicReader) readArray() (Value, error) {
 	}
 
 	// foreach line, parse and read the value
-	v.Array = make([]Value, 0)
+	v.array = make([]Value, 0)
 	for i := 0; i < arrayLen; i++ {
 
 		val, err := r.Read()
@@ -132,7 +117,7 @@ func (r *BasicReader) readArray() (Value, error) {
 		}
 
 		// append parsed value to array
-		v.Array = append(v.Array, val)
+		v.array = append(v.array, val)
 	}
 
 	return v, nil
@@ -141,13 +126,13 @@ func (r *BasicReader) readArray() (Value, error) {
 func (r *BasicReader) readBulk() (Value, error) {
 	v := Value{}
 
-	v.Typ = "bulk"
+	v.typ = "bulk"
 
 	bulk := r.lines[r.readIndex]
 
 	fmt.Printf("bulk value : %v \n", string(bulk))
 
-	v.Bulk = string(bulk)
+	v.bulk = string(bulk)
 	fmt.Printf("current read index %v and it will be %v bulk \n", r.readIndex, r.readIndex+1)
 	r.readIndex += 1
 	return v, nil

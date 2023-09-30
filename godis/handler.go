@@ -1,10 +1,4 @@
-package main
-
-import (
-	"sync"
-
-	"github.com/abdelrhman-basyoni/godis/godis"
-)
+package godis
 
 type commandFunction func([]Value) Value
 
@@ -18,14 +12,17 @@ var Handlers = map[string]commandFunction{
 
 func ping(args []Value) Value {
 	if len(args) == 0 {
-		return Value{typ: "string", str: godis.Ping()}
+		return Value{typ: "string", str: Ping()}
 	}
 
 	return Value{typ: "string", str: args[0].bulk}
 }
 
-var SETs = map[string]string{}
-var SETsMu = sync.RWMutex{}
+// var SETs = map[string]string{}
+// var SETsMu = sync.RWMutex{}
+
+// var HSETs = map[string]map[string]string{}
+// var HSETsMu = sync.RWMutex{}
 
 func set(args []Value) Value {
 	if len(args) != 2 {
@@ -39,7 +36,7 @@ func set(args []Value) Value {
 	SETs[key] = value
 	SETsMu.Unlock()
 
-	return Value{typ: "string", str: godis.Set(key, value)}
+	return Value{typ: "string", str: Set(key, value)}
 }
 
 func get(args []Value) Value {
@@ -48,7 +45,7 @@ func get(args []Value) Value {
 	}
 
 	key := args[0].bulk
-	value := godis.Get(key)
+	value := Get(key)
 
 	if value == "null" {
 		return Value{typ: "null"}
@@ -56,9 +53,6 @@ func get(args []Value) Value {
 
 	return Value{typ: "bulk", bulk: value}
 }
-
-var HSETs = map[string]map[string]string{}
-var HSETsMu = sync.RWMutex{}
 
 func hset(args []Value) Value {
 	if len(args) != 3 {
@@ -69,7 +63,7 @@ func hset(args []Value) Value {
 	key := args[1].bulk
 	value := args[2].bulk
 
-	return Value{typ: "string", str: godis.Hset(hash, key, value)}
+	return Value{typ: "string", str: Hset(hash, key, value)}
 }
 
 func hget(args []Value) Value {
@@ -79,7 +73,7 @@ func hget(args []Value) Value {
 
 	hash := args[0].bulk
 	key := args[1].bulk
-	value := godis.Hget(hash, key)
+	value := Hget(hash, key)
 
 	if value == "null" {
 		return Value{typ: "null"}

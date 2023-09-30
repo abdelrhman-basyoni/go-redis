@@ -2,12 +2,9 @@ package godis
 
 import (
 	"bufio"
-	"io"
 	"os"
 	"sync"
 	"time"
-
-	resp_basic "github.com/abdelrhman-basyoni/godis/resp"
 )
 
 type Aof struct {
@@ -51,14 +48,6 @@ func (aof *Aof) Close() error {
 	return aof.file.Close()
 }
 
-const (
-	STRING  = '+'
-	ERROR   = '-'
-	INTEGER = ':'
-	BULK    = '$'
-	ARRAY   = '*'
-)
-
 func (aof *Aof) Write(value Value) error {
 	aof.mu.Lock()
 	defer aof.mu.Unlock()
@@ -71,26 +60,26 @@ func (aof *Aof) Write(value Value) error {
 	return nil
 }
 
-func (aof *Aof) Read(fn func(resp_basic.Value) bool) error {
-	aof.mu.Lock()
-	defer aof.mu.Unlock()
+// func (aof *Aof) Read(fn func(resp_basic.Value) bool) error {
+// 	aof.mu.Lock()
+// 	defer aof.mu.Unlock()
 
-	aof.file.Seek(0, io.SeekStart)
+// 	aof.file.Seek(0, io.SeekStart)
 
-	reader := resp_basic.NewBasicReader(aof.file)
+// 	reader, _ := NewRespReader(aof.file)
 
-	for {
-		value, err := reader.Read()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
+// 	for {
+// 		value, err := reader.Read()
+// 		if err != nil {
+// 			if err == io.EOF {
+// 				break
+// 			}
 
-			return err
-		}
+// 			return err
+// 		}
 
-		fn(value)
-	}
+// 		fn(value)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
