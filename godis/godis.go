@@ -19,7 +19,7 @@ func HandleValue(value Value) []byte {
 	}
 
 	command := strings.ToUpper(value.array[0].bulk)
-
+	handleAOF(command, value)
 	args := value.array[1:]
 	handler, ok := Handlers[command]
 
@@ -34,4 +34,10 @@ func HandleValue(value Value) []byte {
 	var bytes = result.Marshal()
 
 	return bytes
+}
+
+func handleAOF(command string, value Value) {
+	if command == "SET" || command == "HSET" {
+		AOF.Write(value)
+	}
 }
