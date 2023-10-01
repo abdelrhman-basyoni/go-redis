@@ -11,7 +11,7 @@ import (
 func server() {
 	// listen to tcp
 	l, err := net.Listen("tcp", ":6379")
-	fmt.Println("server listening to port 6379")
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: failed while creating godis server- %v\n", err)
 
@@ -19,45 +19,40 @@ func server() {
 	defer l.Close()
 
 	//aof init
-	aof, err := godis.NewAof("database.aof")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	aof := godis.AOF
 	defer aof.Close()
 	//read the database (aof)
-	// aof.Read(func(value Value) bool {
-	// 	command := strings.ToUpper(value.array[0].bulk)
-	// 	args := value.array[1:]
+	aof.Read()
 
-	// 	handler, ok := Handlers[command]
-	// 	if !ok {
-	// 		fmt.Println("Invalid command: ", command)
-	// 		return false
-	// 	}
+	fmt.Println("server listening to port 6379")
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: failed while accepting godis connections- %v\n", err)
+			continue // Continue to accept more connections
+		}
 
-	// 	handler(args)
-	// 	return true
-	// })
-	// Listen for connections
-	conn, err := l.Accept()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: failed while accepting godis connections- %v\n", err)
+		// Use goroutine to handle each connection concurrently
+		go handleConnection(conn)
 	}
+}
+
+func handleConnection(conn net.Conn) {
 	defer conn.Close()
 	writer := godis.NewBasicWriter(conn)
-	for {
+	fmt.Println("New connection established")
 
+	for {
 		resp, err := godis.NewRespReader(conn)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: reader failed- %v\n", err)
-
+			return // Terminate this goroutine
 		}
 
 		value, err := resp.Read()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: failed while parsing resp- %v\n", err)
-
+			return // Terminate this goroutine
 		}
 
 		res := godis.HandleValue(value)

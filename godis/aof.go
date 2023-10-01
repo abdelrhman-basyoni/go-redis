@@ -2,7 +2,10 @@ package godis
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -60,26 +63,46 @@ func (aof *Aof) Write(value Value) error {
 	return nil
 }
 
-// func (aof *Aof) Read(fn func(resp_basic.Value) bool) error {
-// 	aof.mu.Lock()
-// 	defer aof.mu.Unlock()
+func parser(value Value) bool {
 
-// 	aof.file.Seek(0, io.SeekStart)
+	if len(value.array) == 0 {
+		return false
+	}
+	command := strings.ToUpper(value.array[0].bulk)
+	args := value.array[1:]
 
-// 	reader, _ := NewRespReader(aof.file)
+	handler, ok := Handlers[command]
+	if !ok {
+		fmt.Println("Invalid command: ", command)
+		return false
+	}
 
-// 	for {
-// 		value, err := reader.Read()
-// 		if err != nil {
-// 			if err == io.EOF {
-// 				break
-// 			}
+	handler(args)
 
-// 			return err
-// 		}
+	return true
+}
 
-// 		fn(value)
-// 	}
+func (aof *Aof) Read() error {
 
-// 	return nil
-// }
+	aof.file.Seek(0, io.SeekStart)
+
+	reader, _ := NewRespReader(aof.file)
+
+	for {
+		value, err := reader.Read()
+
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+
+			return err
+		}
+		parser(value)
+
+	}
+	fmt.Println("AOF Finished recovering")
+	return nil
+}
+
+var AOF, _ = NewAof("database.aof")

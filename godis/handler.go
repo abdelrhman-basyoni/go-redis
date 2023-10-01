@@ -29,12 +29,11 @@ func set(args []Value) Value {
 		return Value{typ: "error", str: "ERR wrong number of arguments for 'set' command"}
 	}
 
+	// writing to the AOF
+	newArr := []Value{{typ: "bulk", bulk: "set"}}
 	key := args[0].bulk
 	value := args[1].bulk
-
-	SETsMu.Lock()
-	SETs[key] = value
-	SETsMu.Unlock()
+	AOF.Write(Value{typ: "array", array: append(newArr, args...)})
 
 	return Value{typ: "string", str: Set(key, value)}
 }
