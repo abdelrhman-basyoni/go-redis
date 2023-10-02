@@ -59,7 +59,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-This project was inspired by the work of [Ahmed Ashraf](https://github.com/ahmedash95), and we extend our great thanks to him for providing inspiration for this project.
+This project was inspired by the work of [Ahmed Ammar](https://github.com/ahmedash95), and we extend our great thanks to him for providing inspiration for this project.
 
 
 ---
