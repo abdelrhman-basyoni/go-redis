@@ -52,9 +52,10 @@ The project is a foundation for building a more feature-rich Redis server. Here 
 
 
 
+
 ## License
 
-This project is licensed under the MIT License. See the LICENSE.md file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
