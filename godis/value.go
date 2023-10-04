@@ -2,6 +2,15 @@ package godis
 
 import "strconv"
 
+type Value struct {
+	typ   string
+	str   string
+	num   int
+	bulk  string
+	array []Value
+}
+
+
 // The function Marshal in the provided code is likely named after the concept of marshaling,
 // which is a common term in computer science and programming.
 // Marshaling refers to the process of converting data from one data structure into a format that can be easily stored, transmitted, or reconstructed in another data structure.
