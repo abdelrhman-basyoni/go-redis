@@ -1,6 +1,14 @@
 package godis
 
 import "strconv"
+type Value struct {
+	typ   string
+	str   string
+	num   int
+	bulk  string
+	array []Value
+}
+
 
 // The function Marshal in the provided code is likely named after the concept of marshaling,
 // which is a common term in computer science and programming.
