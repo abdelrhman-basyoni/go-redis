@@ -1,6 +1,8 @@
 package godis
 
-import "sync"
+import (
+	"sync"
+)
 
 func Ping() string {
 
@@ -14,6 +16,13 @@ var HSETs = map[string]map[string]string{}
 var HSETsMu = sync.RWMutex{}
 
 func Set(key, value string) string {
+	go func() {
+
+		if Conf.ao {
+			val := NewSetValue(key, value)
+			AOF.Write(val)
+		}
+	}()
 
 	SETsMu.Lock()
 	SETs[key] = value
@@ -36,6 +45,14 @@ func Get(key string) string {
 }
 
 func Hset(hash, key, value string) string {
+
+	go func() {
+
+		if Conf.ao {
+			val := NewHsetValue(hash, key, value)
+			AOF.Write(val)
+		}
+	}()
 
 	HSETsMu.Lock()
 	if _, ok := HSETs[hash]; !ok {

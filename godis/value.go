@@ -77,3 +77,17 @@ func (v Value) marshallError() []byte {
 func (v Value) marshallNull() []byte {
 	return []byte("$-1\r\n")
 }
+
+func NewSetValue(key, value string) Value {
+	arr := []Value{{typ: "bulk", bulk: "set"}, {typ: "bulk", bulk: key}, {typ: "bulk", bulk: value}}
+	val := Value{typ: "array", array: arr}
+
+	return val
+}
+
+func NewHsetValue(hash, key, value string) Value {
+	arr := []Value{{typ: "bulk", bulk: "hset"}, {typ: "bulk", bulk: key}, {typ: "bulk", bulk: key}, {typ: "bulk", bulk: value}}
+	val := Value{typ: "array", array: arr}
+
+	return val
+}

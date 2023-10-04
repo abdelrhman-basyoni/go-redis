@@ -11,10 +11,9 @@ import (
 )
 
 type Aof struct {
-	file  *os.File
-	rd    *bufio.Reader
-	mu    sync.Mutex
-
+	file *os.File
+	rd   *bufio.Reader
+	mu   sync.Mutex
 }
 
 func NewAof(path string) (*Aof, error) {
@@ -56,6 +55,7 @@ func (aof *Aof) Write(value Value) error {
 	defer aof.mu.Unlock()
 
 	_, err := aof.file.Write(value.Marshal())
+
 	if err != nil {
 		return err
 	}
