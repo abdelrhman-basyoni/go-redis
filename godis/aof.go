@@ -14,7 +14,7 @@ type Aof struct {
 	file  *os.File
 	rd    *bufio.Reader
 	mu    sync.Mutex
-	respW RespWriter
+
 }
 
 func NewAof(path string) (*Aof, error) {
