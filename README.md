@@ -61,7 +61,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This project was inspired by the work of [Ahmed Ammar](https://github.com/ahmedash95), and we extend our great thanks to him for providing inspiration for this project.
 
-
----
-
-Feel free to customize and expand this README to provide more specific details about your project, its goals, and the contributions you are looking for. You can also include installation and usage instructions as your project progresses.
