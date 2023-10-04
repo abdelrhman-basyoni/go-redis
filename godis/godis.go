@@ -41,3 +41,18 @@ func handleAOF(command string, value Value) {
 		AOF.Write(value)
 	}
 }
+
+func Init() error {
+
+	if Conf.ao {
+		//aof init
+		aof := AOF
+		defer aof.Close()
+		//read the database (aof)
+		if err := aof.Read(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
