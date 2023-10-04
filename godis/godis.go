@@ -19,7 +19,7 @@ func HandleValue(value Value) []byte {
 	}
 
 	command := strings.ToUpper(value.array[0].bulk)
-	handleAOF(command, value)
+
 	args := value.array[1:]
 	handler, ok := Handlers[command]
 
@@ -36,23 +36,20 @@ func HandleValue(value Value) []byte {
 	return bytes
 }
 
-func handleAOF(command string, value Value) {
-	if command == "SET" || command == "HSET" {
-		AOF.Write(value)
-	}
-}
-
-func Init() error {
+func Init() (func(), error) {
 
 	if Conf.ao {
 		//aof init
 		aof := AOF
-		defer aof.Close()
+		Conf.SetAO(false)
+		defer Conf.SetAO(true)
 		//read the database (aof)
 		if err := aof.Read(); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return func() {
+		AOF.Close()
+	}, nil
 }

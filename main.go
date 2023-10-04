@@ -39,11 +39,13 @@ func server() {
 
 		godis.Conf.SetAO(true)
 	}
-
-	if err := godis.Init(); err != nil {
+	cl, err := godis.Init()
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: failed while initializing godis- %v\n", err)
 		os.Exit(1)
 	}
+
+	defer cl()
 	// listen to tcp
 	l, err := net.Listen("tcp", ":6379")
 
