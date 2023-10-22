@@ -24,6 +24,7 @@ func flagsInit() {
 
 }
 func main() {
+	defer recoverPanic()
 	flagsInit()
 	flag.Parse()
 
@@ -33,7 +34,7 @@ func main() {
 }
 
 func server() {
-
+	defer recoverPanic()
 	// set configuration
 	if appConfig.appendOnly == "yes" {
 
@@ -69,6 +70,7 @@ func server() {
 }
 
 func handleConnection(conn net.Conn) {
+	defer recoverPanic()
 	defer conn.Close()
 	writer := godis.NewBasicWriter(conn)
 	fmt.Println("New connection established")
@@ -89,5 +91,11 @@ func handleConnection(conn net.Conn) {
 		res := godis.HandleValue(value)
 
 		writer.Write(res)
+	}
+}
+
+func recoverPanic() {
+	if err := recover(); err != nil {
+		fmt.Printf("RECOVERED: %v\n", err)
 	}
 }
