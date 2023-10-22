@@ -1,8 +1,5 @@
 package godis
 
-
-
-
 type commandFunction func([]Value) Value
 
 var Handlers = map[string]commandFunction{
@@ -11,6 +8,7 @@ var Handlers = map[string]commandFunction{
 	"GET":  get,
 	"HSET": hset,
 	"HGET": hget,
+	"DEL":  del,
 }
 
 func ping(args []Value) Value {
@@ -73,4 +71,15 @@ func hget(args []Value) Value {
 	}
 
 	return Value{typ: "bulk", bulk: value}
+}
+
+func del(args []Value) Value {
+	var keys []string
+	for _, arg := range args {
+		keys = append(keys, arg.bulk)
+	}
+	value := Del(keys)
+
+	return Value{typ: "int", num: value}
+
 }

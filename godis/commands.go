@@ -76,3 +76,26 @@ func Hget(hash, key string) string {
 
 	return value
 }
+
+func Del(keys []string) int16 {
+	go func() {
+
+		if Conf.ao {
+			val := NewDelValue(keys)
+			AOF.Write(val)
+		}
+	}()
+
+	SETsMu.RLock()
+	count := int16(0)
+	for _, key := range keys {
+		if _, exists := SETs[key]; exists {
+			count++
+			delete(SETs, key)
+		}
+
+	}
+	SETsMu.RUnlock()
+
+	return count
+}

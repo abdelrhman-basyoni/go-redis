@@ -1,11 +1,13 @@
 package godis
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type Value struct {
 	typ   string
 	str   string
-	num   int
+	num   int16
 	bulk  string
 	array []Value
 }
@@ -22,6 +24,8 @@ func (v Value) Marshal() []byte {
 		return v.marshalBulk()
 	case "string":
 		return v.marshalString()
+	case "int":
+		return v.marshalNum()
 	case "null":
 		return v.marshallNull()
 	case "error":
@@ -35,6 +39,17 @@ func (v Value) marshalString() []byte {
 	var bytes []byte
 	bytes = append(bytes, STRING)
 	bytes = append(bytes, v.str...)
+	bytes = append(bytes, '\r', '\n')
+
+	return bytes
+}
+
+func (v Value) marshalNum() []byte {
+
+	var bytes []byte
+
+	bytes = append(bytes, INTEGER)
+	bytes = append(bytes, strconv.FormatInt(int64(v.num), 10)...)
 	bytes = append(bytes, '\r', '\n')
 
 	return bytes
@@ -87,6 +102,19 @@ func NewSetValue(key, value string) Value {
 
 func NewHsetValue(hash, key, value string) Value {
 	arr := []Value{{typ: "bulk", bulk: "hset"}, {typ: "bulk", bulk: key}, {typ: "bulk", bulk: key}, {typ: "bulk", bulk: value}}
+	val := Value{typ: "array", array: arr}
+
+	return val
+}
+
+func NewDelValue(keys []string) Value {
+	arr := []Value{{typ: "bulk", bulk: "del"}}
+
+	for _, key := range keys {
+		v := Value{typ: "bulk", bulk: key}
+
+		arr = append(arr, v)
+	}
 	val := Value{typ: "array", array: arr}
 
 	return val
