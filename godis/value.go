@@ -119,3 +119,17 @@ func NewDelValue(keys []string) Value {
 
 	return val
 }
+
+func NewErrorValue(message string) Value {
+
+	val := Value{typ: "error", str: message}
+
+	return val
+}
+
+func NewNumberValue(number int16) Value {
+
+	val := Value{typ: "int", num: number}
+
+	return val
+}

@@ -1,14 +1,21 @@
 package godis
 
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
+
 type commandFunction func([]Value) Value
 
 var Handlers = map[string]commandFunction{
-	"PING": ping,
-	"SET":  set,
-	"GET":  get,
-	"HSET": hset,
-	"HGET": hget,
-	"DEL":  del,
+	"PING":   ping,
+	"SET":    set,
+	"GET":    get,
+	"HSET":   hset,
+	"HGET":   hget,
+	"DEL":    del,
+	"EXPIRE": expire,
 }
 
 func ping(args []Value) Value {
@@ -82,4 +89,20 @@ func del(args []Value) Value {
 
 	return Value{typ: "int", num: value}
 
+}
+
+func expire(args []Value) Value {
+
+	key := args[0].bulk
+	numVal, err := strconv.ParseInt(args[1].bulk, 10, 64)
+	if err != nil {
+		return NewErrorValue(fmt.Sprintf("Invalid number for Expire:  %s ", string(args[1].bulk)))
+	}
+	tm := time.Duration(numVal * int64(time.Second))
+
+	res := Expire(tm, key, nil)
+	if res == -1 {
+		return NewErrorValue(fmt.Sprintf("Invalid Option for Expire: option %s ", args[2].bulk))
+	}
+	return NewNumberValue(int16(res))
 }

@@ -14,11 +14,11 @@ const (
 )
 
 type RespReader interface {
-	// readLine() (line []byte, n int, err error)
 	Read() (Value, error)
 }
 
 func NewRespReader(buff interface{}) (RespReader, error) {
+
 	switch buff := buff.(type) {
 	case string:
 		{
@@ -27,6 +27,9 @@ func NewRespReader(buff interface{}) (RespReader, error) {
 		}
 	case io.Reader:
 		{
+			// buf := make([]byte, 1024)
+			// length, _ := buff.Read(buf)
+			// fmt.Println(string(buf[:length]))
 			return NewRespIo(buff), nil
 		}
 	default:

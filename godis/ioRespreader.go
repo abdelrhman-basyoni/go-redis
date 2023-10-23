@@ -48,12 +48,14 @@ func (r *RespIo) Read() (Value, error) {
 	if err != nil {
 		return Value{}, err
 	}
-
+	fmt.Println(string(_type))
 	switch _type {
 	case ARRAY:
 		return r.readArray()
 	case BULK:
 		return r.readBulk()
+	case INTEGER:
+		return r.readNumber()
 	default:
 		fmt.Printf("Unknown type: %v", string(_type))
 		return Value{}, nil
@@ -104,6 +106,29 @@ func (r *RespIo) readBulk() (Value, error) {
 	// Read the trailing CRLF
 	r.readLine()
 
+	return v, nil
+}
+
+func (r *RespIo) readNumber() (Value, error) {
+	v := Value{}
+
+	v.typ = "bulk"
+
+	len, _, err := r.readInteger()
+	if err != nil {
+		return v, err
+	}
+
+	num := make([]byte, len)
+
+	r.reader.Read(num)
+
+	n, err := strconv.Atoi(string(num))
+	if err != nil {
+		return v, err
+	}
+
+	v.num = int16(n)
 	return v, nil
 }
 

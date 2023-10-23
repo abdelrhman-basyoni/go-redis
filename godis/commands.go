@@ -2,6 +2,7 @@ package godis
 
 import (
 	"sync"
+	"time"
 )
 
 func Ping() string {
@@ -98,4 +99,44 @@ func Del(keys []string) int16 {
 	SETsMu.RUnlock()
 
 	return count
+}
+
+// NX -- Set expiry only when the key has no expiry
+// XX -- Set expiry only when the key has an existing expiry
+// GT -- Set expiry only when the new expiry is greater than current one
+// LT -- Set expiry only when the new expiry is less than current one
+func Expire(expireTime time.Duration, key string, option *string) int8 {
+	options := []string{"NX", "XX", "GT", "LT"}
+	if option != nil {
+		for _, op := range options {
+			if op == *option {
+				break
+			}
+
+		}
+
+		return -1
+	}
+
+	// if exists fire a goroutine that waits for the expire and then it deletes the key
+	if _, exists := SETs[key]; exists {
+		go func() {
+			<-time.After(expireTime)
+			delKey(key)
+		}()
+
+		return 1
+
+	}
+
+	return 0
+
+}
+
+// deletes a key from the Set
+func delKey(key string) {
+	SETsMu.Lock()
+	defer SETsMu.Unlock()
+
+	delete(SETs, key)
 }
