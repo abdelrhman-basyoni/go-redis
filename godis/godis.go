@@ -8,7 +8,7 @@ import (
 func HandleValue(value Value) []byte {
 	errRes := Value{Typ: "string", Str: ""}.Marshal()
 
-	if value.Typ != "Array" {
+	if value.Typ != "array" {
 		return errRes
 
 	}

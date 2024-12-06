@@ -80,11 +80,12 @@ func handleConnection(conn net.Conn) {
 		resp := goresp.NewRespReader(conn)
 
 		value, err := resp.Read()
+
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: failed while parsing resp- %v\n", err)
 			return // Terminate this goroutine
 		}
-		fmt.Println(value)
+
 		res := godis.HandleValue(value)
 		fmt.Println(res)
 		writer.Write(res)
