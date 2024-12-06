@@ -53,7 +53,7 @@ func get(args []Value) Value {
 		return Value{Typ: "null"}
 	}
 
-	return Value{Typ: "Bulk", Bulk: value}
+	return Value{Typ: "bulk", Bulk: value}
 }
 
 func hset(args []Value) Value {
@@ -81,7 +81,7 @@ func hget(args []Value) Value {
 		return Value{Typ: "null"}
 	}
 
-	return Value{Typ: "Bulk", Bulk: value}
+	return Value{Typ: "bulk", Bulk: value}
 }
 
 func del(args []Value) Value {
