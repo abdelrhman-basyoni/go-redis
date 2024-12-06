@@ -86,7 +86,7 @@ func handleConnection(conn net.Conn) {
 		}
 		fmt.Println(value)
 		res := godis.HandleValue(value)
-
+		fmt.Println(res)
 		writer.Write(res)
 	}
 }
