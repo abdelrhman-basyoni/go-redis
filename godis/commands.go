@@ -3,6 +3,8 @@ package godis
 import (
 	"sync"
 	"time"
+
+	goresp "github.com/abdelrhman-basyoni/goresp"
 )
 
 func Ping() string {
@@ -20,7 +22,7 @@ func Set(key, value string) string {
 	go func() {
 
 		if Conf.ao {
-			val := NewSetValue(key, value)
+			val := goresp.NewSetValue(key, value)
 			AOF.Write(val)
 		}
 	}()
@@ -50,7 +52,7 @@ func Hset(hash, key, value string) string {
 	go func() {
 
 		if Conf.ao {
-			val := NewHsetValue(hash, key, value)
+			val := goresp.NewHsetValue(hash, key, value)
 			AOF.Write(val)
 		}
 	}()
@@ -82,7 +84,7 @@ func Del(keys []string) int16 {
 	go func() {
 
 		if Conf.ao {
-			val := NewDelValue(keys)
+			val := goresp.NewDelValue(keys)
 			AOF.Write(val)
 		}
 	}()

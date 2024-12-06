@@ -6,21 +6,21 @@ import (
 )
 
 func HandleValue(value Value) []byte {
-	errRes := Value{typ: "string", str: ""}.Marshal()
+	errRes := Value{Typ: "string", Str: ""}.Marshal()
 
-	if value.typ != "array" {
+	if value.Typ != "Array" {
 		return errRes
 
 	}
 
-	if len(value.array) == 0 {
+	if len(value.Array) == 0 {
 		return errRes
 
 	}
 
-	command := strings.ToUpper(value.array[0].bulk)
+	command := strings.ToUpper(value.Array[0].Bulk)
 
-	args := value.array[1:]
+	args := value.Array[1:]
 	handler, ok := Handlers[command]
 
 	if !ok {

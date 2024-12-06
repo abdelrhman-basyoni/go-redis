@@ -1,3 +1,5 @@
 module github.com/abdelrhman-basyoni/godis
 
-go 1.21.0
+go 1.22.4
+
+require github.com/abdelrhman-basyoni/goresp v0.1.0 // indirect

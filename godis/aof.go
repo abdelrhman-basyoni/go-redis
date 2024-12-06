@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	goresp "github.com/abdelrhman-basyoni/goresp"
 )
 
 type Aof struct {
@@ -51,11 +53,11 @@ func (aof *Aof) Write(value Value) error {
 
 func parser(value Value) bool {
 
-	if len(value.array) == 0 {
+	if len(value.Array) == 0 {
 		return false
 	}
-	command := strings.ToUpper(value.array[0].bulk)
-	args := value.array[1:]
+	command := strings.ToUpper(value.Array[0].Bulk)
+	args := value.Array[1:]
 
 	handler, ok := Handlers[command]
 	if !ok {
@@ -72,7 +74,7 @@ func (aof *Aof) Read() error {
 
 	aof.file.Seek(0, io.SeekStart)
 
-	reader, _ := NewRespReader(aof.file)
+	reader := goresp.NewRespReader(aof.file)
 
 	for {
 		value, err := reader.Read()
