@@ -15,7 +15,7 @@ type AppConfig struct {
 }
 
 var appConfig = AppConfig{
-	appendOnly: "no",
+	appendOnly: "yes",
 }
 
 func flagsInit() {
@@ -87,7 +87,7 @@ func handleConnection(conn net.Conn) {
 		}
 
 		res := godis.HandleValue(value)
-		fmt.Println(res)
+
 		writer.Write(res)
 	}
 }
