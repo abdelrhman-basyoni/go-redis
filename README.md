@@ -22,6 +22,16 @@ As of the latest commit, the project has the following features and limitations:
 
 - Incomplete Redis Functionality: The project currently lacks many of the advanced features and data structures found in a full-fledged Redis server. It serves as a basic starting point for further development.
 
+## Commands that can be used
+ - ping
+ - set
+ - get
+ - hset
+ - hget
+ - del
+ - expire
+ - BGREWRITEAOF
+
 ## What We've Learned
 
 From working on the project, we've learned the following:
