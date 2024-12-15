@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/abdelrhman-basyoni/godis/godis"
+	goresp "github.com/abdelrhman-basyoni/goresp"
 )
 
 type AppConfig struct {
@@ -14,7 +15,7 @@ type AppConfig struct {
 }
 
 var appConfig = AppConfig{
-	appendOnly: "no",
+	appendOnly: "yes",
 }
 
 func flagsInit() {
@@ -72,22 +73,19 @@ func server() {
 func handleConnection(conn net.Conn) {
 	defer recoverPanic()
 	defer conn.Close()
-	writer := godis.NewBasicWriter(conn)
+	writer := goresp.NewBasicWriter(conn)
 	fmt.Println("New connection established")
 
 	for {
-		resp, err := godis.NewRespReader(conn)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: reader failed- %v\n", err)
-			return // Terminate this goroutine
-		}
+		resp := goresp.NewRespReader(conn)
 
 		value, err := resp.Read()
+
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: failed while parsing resp- %v\n", err)
 			return // Terminate this goroutine
 		}
-		fmt.Println(value)
+
 		res := godis.HandleValue(value)
 
 		writer.Write(res)
