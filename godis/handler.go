@@ -91,7 +91,7 @@ func del(args []Value) Value {
 	}
 	value := Del(keys)
 
-	return Value{Typ: "int", Num: value}
+	return Value{Typ: "int", Num: int64(value)}
 
 }
 
@@ -108,5 +108,5 @@ func expire(args []Value) Value {
 	if res == -1 {
 		return goresp.NewErrorValue(fmt.Sprintf("Invalid Option for Expire: option %s ", args[2].Bulk))
 	}
-	return goresp.NewNumberValue(int16(res))
+	return goresp.NewNumberValue(int64(res))
 }

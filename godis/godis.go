@@ -6,15 +6,15 @@ import (
 )
 
 func HandleValue(value Value) []byte {
-	errRes := Value{Typ: "string", Str: ""}.Marshal()
+	errRes := Value{Typ: "string", Str: "Invalid command"}
 
 	if value.Typ != "array" {
-		return errRes
+		return errRes.Marshal()
 
 	}
 
 	if len(value.Array) == 0 {
-		return errRes
+		return errRes.Marshal()
 
 	}
 
@@ -25,7 +25,8 @@ func HandleValue(value Value) []byte {
 
 	if !ok {
 		fmt.Println("Invalid command: ", command)
-		return errRes
+		errRes.Str = fmt.Sprintf("Invalid command: %v", command)
+		return errRes.Marshal()
 
 	}
 
